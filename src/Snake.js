@@ -4,8 +4,8 @@ class Snake {
     this.gridSize = gridSize;
     this.onGameOver = onGameOver;
     this.body = [this.p5.createVector(0, 0)];
-    this.xSpeed = 0; // Start with no horizontal movement
-    this.ySpeed = 0; // Start with no vertical movement
+    this.xSpeed = 0;
+    this.ySpeed = 0;
   }
 
   setDirection(x, y) {
@@ -37,9 +37,34 @@ class Snake {
 
   show() {
     this.p5.fill(0, 255, 0);
-    for (let segment of this.body) {
+    for (let i = 0; i < this.body.length; i++) {
+      let segment = this.body[i];
       this.p5.rect(segment.x, segment.y, this.gridSize, this.gridSize);
     }
+
+    // Draw the face on the head
+    this.drawFace();
+  }
+
+  drawFace() {
+    let head = this.body[this.body.length - 1];
+    let centerX = head.x + this.gridSize / 2;
+    let centerY = head.y + this.gridSize / 2;
+    let eyeOffset = this.gridSize / 4;
+
+    // Draw eyes
+    this.p5.fill(255); // White color for eyes
+    this.p5.ellipse(centerX - eyeOffset, centerY - eyeOffset, 6, 6);
+    this.p5.ellipse(centerX + eyeOffset, centerY - eyeOffset, 6, 6);
+
+    this.p5.fill(0); // Black color for pupils
+    this.p5.ellipse(centerX - eyeOffset, centerY - eyeOffset, 3, 3);
+    this.p5.ellipse(centerX + eyeOffset, centerY - eyeOffset, 3, 3);
+
+    // Draw mouth (a simple smile or line)
+    this.p5.stroke(0);
+    this.p5.noFill();
+    this.p5.arc(centerX, centerY + eyeOffset / 2, 10, 10, 0, this.p5.PI);
   }
 
   eat(pos) {
