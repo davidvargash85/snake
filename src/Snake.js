@@ -1,14 +1,9 @@
 class Snake {
-  constructor(p5Instance, gridSize, onGameOver) {
+  constructor(p5Instance, gridSize, onGameOver, startX, startY) {
     this.p5 = p5Instance;
     this.gridSize = gridSize;
     this.onGameOver = onGameOver;
-
-    // Calculate the center position based on the canvas size and grid size
-    const midCol = Math.floor(this.p5.width / (2 * this.gridSize)) * this.gridSize;
-    const midRow = Math.floor(this.p5.height / (2 * this.gridSize)) * this.gridSize;
-
-    this.body = [this.p5.createVector(midCol, midRow)];
+    this.body = [this.p5.createVector(startX, startY)];
     this.xSpeed = 0;
     this.ySpeed = 0;
   }
@@ -55,21 +50,27 @@ class Snake {
     let centerX = head.x + this.gridSize / 2;
     let centerY = head.y + this.gridSize / 2;
     let eyeOffset = this.gridSize / 4;
-
+    let pupilOffset = this.gridSize / 8;
+  
+    // Calculate eye movement based on direction
+    let pupilXOffset = this.xSpeed * pupilOffset;
+    let pupilYOffset = this.ySpeed * pupilOffset;
+  
     // Draw eyes
-    this.p5.fill(255); // White color for eyes
+    this.p5.fill(255);
     this.p5.ellipse(centerX - eyeOffset, centerY - eyeOffset, 6, 6);
     this.p5.ellipse(centerX + eyeOffset, centerY - eyeOffset, 6, 6);
-
-    this.p5.fill(0); // Black color for pupils
-    this.p5.ellipse(centerX - eyeOffset, centerY - eyeOffset, 3, 3);
-    this.p5.ellipse(centerX + eyeOffset, centerY - eyeOffset, 3, 3);
-
-    // Draw mouth (a simple smile)
+  
+    // Draw pupils
+    this.p5.fill(0);
+    this.p5.ellipse(centerX - eyeOffset + pupilXOffset, centerY - eyeOffset + pupilYOffset, 3, 3);
+    this.p5.ellipse(centerX + eyeOffset + pupilXOffset, centerY - eyeOffset + pupilYOffset, 3, 3);
+  
+    // Draw mouth
     this.p5.stroke(0);
     this.p5.noFill();
     this.p5.arc(centerX, centerY + eyeOffset / 2, 10, 10, 0, this.p5.PI);
-  }
+  } 
 
   eat(pos) {
     let head = this.body[this.body.length - 1];

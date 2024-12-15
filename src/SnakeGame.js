@@ -17,7 +17,11 @@ const SnakeGame = React.memo(({ speed, onGameOver, onFoodEaten }) => {
       p.setup = () => {
         p.createCanvas(400, 400);
         p.frameRate(speed);
-        snake = new Snake(p, gridSize, onGameOver);
+
+        const midCol = Math.floor(p.width / (2 * gridSize)) * gridSize;
+        const midRow = Math.floor(p.height / (2 * gridSize)) * gridSize;
+
+        snake = new Snake(p, gridSize, onGameOver, midCol, midRow);
         spawnFood();
       };
 
