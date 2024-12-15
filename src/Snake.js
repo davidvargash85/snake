@@ -3,7 +3,12 @@ class Snake {
     this.p5 = p5Instance;
     this.gridSize = gridSize;
     this.onGameOver = onGameOver;
-    this.body = [this.p5.createVector(0, 0)];
+
+    // Calculate the center position based on the canvas size and grid size
+    const midCol = Math.floor(this.p5.width / (2 * this.gridSize)) * this.gridSize;
+    const midRow = Math.floor(this.p5.height / (2 * this.gridSize)) * this.gridSize;
+
+    this.body = [this.p5.createVector(midCol, midRow)];
     this.xSpeed = 0;
     this.ySpeed = 0;
   }
@@ -37,8 +42,7 @@ class Snake {
 
   show() {
     this.p5.fill(0, 255, 0);
-    for (let i = 0; i < this.body.length; i++) {
-      let segment = this.body[i];
+    for (let segment of this.body) {
       this.p5.rect(segment.x, segment.y, this.gridSize, this.gridSize);
     }
 
@@ -61,7 +65,7 @@ class Snake {
     this.p5.ellipse(centerX - eyeOffset, centerY - eyeOffset, 3, 3);
     this.p5.ellipse(centerX + eyeOffset, centerY - eyeOffset, 3, 3);
 
-    // Draw mouth (a simple smile or line)
+    // Draw mouth (a simple smile)
     this.p5.stroke(0);
     this.p5.noFill();
     this.p5.arc(centerX, centerY + eyeOffset / 2, 10, 10, 0, this.p5.PI);
