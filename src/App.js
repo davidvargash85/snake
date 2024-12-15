@@ -1,26 +1,26 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import SnakeGame from './SnakeGame';
 import './App.css';
 
 function App() {
-  const [speed, setSpeed] = useState(8);
+  const [speed, setSpeed] = useState(7);
   const [gameOver, setGameOver] = useState(false);
-  const [foodCount, setFoodCount] = useState(0); // State for food counter
+  const [foodCount, setFoodCount] = useState(0);
   const newGameButtonRef = useRef(null);
 
-  const handleGameOver = () => {
+  const handleGameOver = useCallback(() => {
     setGameOver(true);
-  };
+  }, []);
 
   const handleRestart = () => {
     setGameOver(false);
     setSpeed(8);
-    setFoodCount(0); // Reset food counter on restart
+    setFoodCount(0);
   };
 
-  const handleFoodEaten = () => {
-    // setFoodCount((prev) => prev + 1); // Increment food counter
-  };
+  const handleFoodEaten = useCallback(() => {
+    setFoodCount((prev) => prev + 1);
+  }, []);
 
   useEffect(() => {
     if (gameOver && newGameButtonRef.current) {
