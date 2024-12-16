@@ -3,21 +3,22 @@ import SnakeGame from './SnakeGame';
 import './App.css';
 
 function App() {
-  const [speed, setSpeed] = useState(7);
   const [gameOver, setGameOver] = useState(false);
   const [foodCount, setFoodCount] = useState(0);
   const newGameButtonRef = useRef(null);
 
+  // Memoized function for handling game over
   const handleGameOver = useCallback(() => {
     setGameOver(true);
   }, []);
 
-  const handleRestart = () => {
+  // Memoized function for handling game restart
+  const handleRestart = useCallback(() => {
     setGameOver(false);
-    setSpeed(8);
     setFoodCount(0);
-  };
+  }, []);
 
+  // Memoized function for handling food eaten
   const handleFoodEaten = useCallback(() => {
     setFoodCount((prev) => prev + 1);
   }, []);
@@ -35,7 +36,6 @@ function App() {
         <>
           <SnakeGame
             onGameOver={handleGameOver}
-            speed={speed}
             onFoodEaten={handleFoodEaten}
           />
           <div className="food-counter">

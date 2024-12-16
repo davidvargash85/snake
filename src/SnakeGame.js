@@ -1,7 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import p5 from 'p5';
+import drawApple from './Apple';
+import drawSnakeFace from './SnakeFace';
 
-const SnakeGame = React.memo(() => {
+const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
   const sketchRef = useRef();
   const p5InstanceRef = useRef(null);
 
@@ -18,33 +20,31 @@ const SnakeGame = React.memo(() => {
     let gameStarted = false;
     let segments = [];
     let fruit;
-    let score = 0;
 
     const sketch = (p) => {
       p.setup = () => {
         p.createCanvas(500, 500);
         p.frameRate(10);
-        p.textAlign(p.CENTER, p.CENTER);
-        p.textSize(20);
         showStartScreen();
       };
 
       p.draw = () => {
         p.background(0);
         p.scale(p.width / gridWidth, p.height / gridHeight);
-
+      
         if (!gameStarted) {
           showStartScreen();
         } else {
           p.translate(0.5, 0.5);
-          showFruit();
+          drawApple(p, fruit); // Use the drawApple function to render the food
           showSegments();
+          drawSnakeFace(p, segments[0], direction, fruit); // Pass the food position to drawSnakeFace
           updateSegments();
           checkForCollision();
           checkForFruit();
         }
-      };
-
+      };      
+      
       const showStartScreen = () => {
         p.noStroke();
         p.fill(32);
@@ -64,25 +64,22 @@ const SnakeGame = React.memo(() => {
           segments.unshift(p.createVector(x, yStart));
         }
         direction = startDirection;
-        score = 0;
         gameStarted = true;
         p.loop();
       };
 
-      const showFruit = () => {
-        p.stroke(255, 64, 32);
-        p.point(fruit.x, fruit.y);
-      };
-
       const showSegments = () => {
         p.noFill();
-        p.stroke(96, 255, 64);
+        p.stroke(96, 255, 64); // Green color for the snake body
+        p.strokeWeight(1.0);   // Slightly thicker stroke for better visibility
+      
         p.beginShape();
         for (let segment of segments) {
           p.vertex(segment.x, segment.y);
         }
         p.endShape();
       };
+      
 
       const updateSegments = () => {
         segments.pop();
@@ -100,8 +97,8 @@ const SnakeGame = React.memo(() => {
           case 'down':
             head.y += 1;
             break;
-            default:
-              break;
+          default:
+            break;
         }
         segments.unshift(head);
       };
@@ -120,10 +117,9 @@ const SnakeGame = React.memo(() => {
       };
 
       const gameOver = () => {
-        p.noStroke();
-        p.fill(32);
         gameStarted = false;
         p.noLoop();
+        // onGameOver(); // Call the onGameOver callback
       };
 
       const selfColliding = () => {
@@ -134,10 +130,10 @@ const SnakeGame = React.memo(() => {
       const checkForFruit = () => {
         let head = segments[0];
         if (head.equals(fruit)) {
-          score += 1;
           let tail = segments[segments.length - 1].copy();
           segments.push(tail);
           updateFruitCoordinates();
+          onFoodEaten(); // Call the onFoodEaten callback
         }
       };
 
@@ -173,7 +169,7 @@ const SnakeGame = React.memo(() => {
       p5InstanceRef.current.remove();
       p5InstanceRef.current = null;
     };
-  }, []);
+  }, [onGameOver, onFoodEaten]);
 
   return <div ref={sketchRef}></div>;
 });
