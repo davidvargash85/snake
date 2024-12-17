@@ -3,6 +3,7 @@ import p5 from 'p5';
 import drawApple from './Apple';
 import drawSnakeFace from './SnakeFace';
 import drawBackground from './Background';
+import showSegments from './Segments';
 
 const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
   const sketchRef = useRef();
@@ -11,11 +12,11 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
   useEffect(() => {
     if (p5InstanceRef.current) return; // Prevent re-creating p5 instance
 
-    const gridWidth = 30;
-    const gridHeight = 30;
-    const startingSegments = 15;
-    const xStart = 0;
-    const yStart = 15;
+    const gridWidth = 20;
+    const gridHeight = 20;
+    const startingSegments = 6;
+    const xStart = 7;
+    const yStart = 7;
     let startDirection = 'right';
     let direction = startDirection;
     let gameStarted = false;
@@ -33,7 +34,7 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
         p.background(0);
         p.scale(p.width / gridWidth, p.height / gridHeight);
       
-        // Draw the checkered background after scaling
+        // Draw the checkered background
         drawBackground(p, gridWidth, gridHeight);
       
         if (!gameStarted) {
@@ -41,15 +42,13 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
         } else {
           p.translate(0.5, 0.5);
           drawApple(p, fruit);
-          showSegments();
+          showSegments(p, segments); // Use the imported showSegments function
           drawSnakeFace(p, segments[0], direction, fruit);
           updateSegments();
           checkForCollision();
           checkForFruit();
         }
       };
-      
-      
 
       const showStartScreen = () => {
         p.noStroke();
@@ -72,52 +71,6 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
         direction = startDirection;
         gameStarted = true;
         p.loop();
-      };
-
-      const showSegments = () => {
-        p.noStroke();
-        p.fill(50, 100, 255); // Blue color for the head
-
-        const maxWidth = 1.2; // Maximum width for the head
-        const minWidth = maxWidth / 1.2; // Minimum width for the tail
-        const totalSegments = segments.length;
-        const overlapFactor = 0.05; // Overlap factor to extend each quad
-
-        for (let i = 0; i < totalSegments - 1; i++) {
-          let current = segments[i];
-          let next = segments[i + 1];
-
-          // Calculate the width for the current and next segments
-          let currentWidth = p.map(i, 0, totalSegments - 1, maxWidth, minWidth);
-          let nextWidth = p.map(
-            i + 1,
-            0,
-            totalSegments - 1,
-            maxWidth,
-            minWidth
-          );
-
-          // Calculate the angle between the current and next segments
-          let angle = p.atan2(next.y - current.y, next.x - current.x);
-
-          // Calculate perpendicular offsets for the current and next segments
-          let offsetX = (p.sin(angle) * currentWidth) / 2;
-          let offsetY = (-p.cos(angle) * currentWidth) / 2;
-          let nextOffsetX = (p.sin(angle) * nextWidth) / 2;
-          let nextOffsetY = (-p.cos(angle) * nextWidth) / 2;
-
-          // Extend the next segment position slightly for overlap
-          let extendedNextX = next.x + p.cos(angle) * overlapFactor;
-          let extendedNextY = next.y + p.sin(angle) * overlapFactor;
-
-          // Draw a quad between the current and extended next segments
-          p.beginShape();
-          p.vertex(current.x - offsetX, current.y - offsetY);
-          p.vertex(current.x + offsetX, current.y + offsetY);
-          p.vertex(extendedNextX + nextOffsetX, extendedNextY + nextOffsetY);
-          p.vertex(extendedNextX - nextOffsetX, extendedNextY - nextOffsetY);
-          p.endShape(p.CLOSE);
-        }
       };
 
       const updateSegments = () => {

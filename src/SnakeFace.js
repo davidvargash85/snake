@@ -1,8 +1,8 @@
 const drawSnakeFace = (p, head, direction, food) => {
-  const headWidth = 2;       // Width of the snake's head
-  const headHeight = 1.5;    // Height of the snake's head
-  const eyeSize = 0.5*3;       // Size of the white eyes
-  const pupilSize = 0.2*3;     // Size of the black pupils
+  const headWidth = 1.4;       // Width of the snake's head
+  const headHeight = 1;    // Height of the snake's head
+  const eyeSize = 0.8;       // Size of the white eyes
+  const pupilSize = 0.4;     // Size of the black pupils
   // const tongueLength = 0.6;    // Length of the tongue
   // const tongueWidth = 0.2;   // Width of the tongue
 

@@ -1,6 +1,6 @@
 const drawApple = (p, fruit) => {
-  const appleSize = 1.5;   // Increased size for the apple
-  const stemHeight = 0.5;  // Increased height for the stem
+  const appleSize = 1.0;   // Increased size for the apple
+  const stemHeight = 0.3;  // Increased height for the stem
   const leafSize = 0.5;    // Increased size for the leaf
 
   // Draw the red apple
