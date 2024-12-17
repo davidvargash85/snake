@@ -27,50 +27,42 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
       p.setup = () => {
         p.createCanvas(500, 500);
         p.frameRate(10);
-        showStartScreen();
+        initializeGame();
       };
 
       p.draw = () => {
         p.background(0);
         p.scale(p.width / gridWidth, p.height / gridHeight);
-      
+
         // Draw the checkered background
         drawBackground(p, gridWidth, gridHeight);
-      
-        if (!gameStarted) {
-          showStartScreen();
-        } else {
-          p.translate(0.5, 0.5);
-          drawApple(p, fruit);
-          showSegments(p, segments); // Use the imported showSegments function
-          drawSnakeFace(p, segments[0], direction, fruit);
+
+        // Draw the apple and snake
+        p.translate(0.5, 0.5);
+        drawApple(p, fruit);
+        showSegments(p, segments); // Draw the snake segments
+        drawSnakeFace(p, segments[0], direction, fruit);
+
+        if (gameStarted) {
           updateSegments();
           checkForCollision();
           checkForFruit();
         }
       };
 
-      const showStartScreen = () => {
-        p.noStroke();
-        p.fill(32);
-        p.noLoop();
-      };
-
-      p.mousePressed = () => {
-        if (!gameStarted) {
-          startGame();
-        }
-      };
-
-      const startGame = () => {
-        updateFruitCoordinates();
+      const initializeGame = () => {
+        // Initialize snake segments
         segments = [];
         for (let x = xStart; x < xStart + startingSegments; x += 1) {
           segments.unshift(p.createVector(x, yStart));
         }
         direction = startDirection;
+        updateFruitCoordinates();
+        gameStarted = false;
+      };
+
+      const startGame = () => {
         gameStarted = true;
-        p.loop();
       };
 
       const updateSegments = () => {
@@ -110,8 +102,7 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
 
       const gameOver = () => {
         gameStarted = false;
-        p.noLoop();
-        // onGameOver(); // Call the onGameOver callback
+        onGameOver(); // Call the onGameOver callback
       };
 
       const selfColliding = () => {
@@ -136,6 +127,10 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
       };
 
       p.keyPressed = () => {
+        if (!gameStarted) {
+          startGame();
+        }
+
         switch (p.keyCode) {
           case p.LEFT_ARROW:
             if (direction !== 'right') direction = 'left';
