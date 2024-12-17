@@ -1,31 +1,50 @@
 const drawSnakeFace = (p, head, direction, food) => {
-  const headSize = 2;       // Larger size for the snake's head
-  const eyeSize = 0.6 * 3;      // White eye size
-  const pupilSize = 0.3 * 3;    // Black pupil size
+  const headWidth = 2;       // Width of the snake's head
+  const headHeight = 1.5;    // Height of the snake's head
+  const eyeSize = 0.5*3;       // Size of the white eyes
+  const pupilSize = 0.2*3;     // Size of the black pupils
+  // const tongueLength = 0.6;    // Length of the tongue
+  // const tongueWidth = 0.2;   // Width of the tongue
 
   // Draw the head
   p.fill(50, 100, 255); // Blue color for the head
   p.stroke(0);
   p.strokeWeight(0.05);
-  p.rect(head.x - headSize / 2, head.y - headSize / 2, headSize, headSize, 0.4);
+  p.rect(head.x - headWidth / 2, head.y - headHeight / 2, headWidth, headHeight, 0.5);
 
-  // Calculate the angle toward the food
+  // Draw the red tongue
+  // p.push();
+  // p.stroke(255, 0, 0); // Red color for the tongue
+  // p.strokeWeight(tongueWidth);
+
+  // Determine tongue direction based on movement
+  switch (direction) {
+    case 'right':
+      p.line(head.x + headWidth / 2, head.y, head.x + headWidth / 2, head.y);
+      break;
+    case 'left':
+      p.line(head.x - headWidth / 2, head.y, head.x - headWidth / 2, head.y);
+      break;
+    case 'up':
+      p.line(head.x, head.y - headHeight / 2, head.x, head.y - headHeight / 2);
+      break;
+    case 'down':
+      p.line(head.x, head.y + headHeight / 2, head.x, head.y + headHeight / 2);
+      break;
+  }
+
+  p.pop();
+
+  // Calculate the angle toward the food for pupil movement
   const angle = p.atan2(food.y - head.y, food.x - head.x);
 
-  // Define eye positions based on the head size
-  const eyeOffset = headSize / 3;
-  const pupilMaxOffset = eyeSize / 4; // Limit pupil movement to stay within the eye
+  // Define eye positions
+  const eyeOffsetX = headWidth / 4;
+  const eyeOffsetY = headHeight / 4;
+  const pupilMaxOffset = eyeSize / 4;
 
-  // Calculate eye centers
-  const leftEye = p.createVector(
-    head.x + eyeOffset * p.cos(angle + p.HALF_PI),
-    head.y + eyeOffset * p.sin(angle + p.HALF_PI)
-  );
-
-  const rightEye = p.createVector(
-    head.x + eyeOffset * p.cos(angle - p.HALF_PI),
-    head.y + eyeOffset * p.sin(angle - p.HALF_PI)
-  );
+  const leftEye = p.createVector(head.x - eyeOffsetX, head.y - eyeOffsetY);
+  const rightEye = p.createVector(head.x + eyeOffsetX, head.y - eyeOffsetY);
 
   // Draw the white eyes
   p.fill(255); // White for the eyes

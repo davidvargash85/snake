@@ -12,7 +12,7 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
 
     const gridWidth = 30;
     const gridHeight = 30;
-    const startingSegments = 10;
+    const startingSegments = 15;
     const xStart = 0;
     const yStart = 15;
     let startDirection = 'right';
@@ -69,15 +69,43 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
       };
 
       const showSegments = () => {
-        p.noFill();
-        p.stroke(96, 255, 64); // Green color for the snake body
-        p.strokeWeight(1.0);   // Slightly thicker stroke for better visibility
+        p.noStroke();
+        p.fill(96, 255, 64); // Green color for the snake body
       
-        p.beginShape();
-        for (let segment of segments) {
-          p.vertex(segment.x, segment.y);
+        const maxWidth = 1.2;            // Maximum width for the head
+        const minWidth = maxWidth / 1.2; // Minimum width for the tail
+        const totalSegments = segments.length;
+        const overlapFactor = 0.2;     // Overlap factor to extend each quad
+      
+        for (let i = 0; i < totalSegments - 1; i++) {
+          let current = segments[i];
+          let next = segments[i + 1];
+      
+          // Calculate the width for the current and next segments
+          let currentWidth = p.map(i, 0, totalSegments - 1, maxWidth, minWidth);
+          let nextWidth = p.map(i + 1, 0, totalSegments - 1, maxWidth, minWidth);
+      
+          // Calculate the angle between the current and next segments
+          let angle = p.atan2(next.y - current.y, next.x - current.x);
+      
+          // Calculate perpendicular offsets for the current and next segments
+          let offsetX = p.sin(angle) * currentWidth / 2;
+          let offsetY = -p.cos(angle) * currentWidth / 2;
+          let nextOffsetX = p.sin(angle) * nextWidth / 2;
+          let nextOffsetY = -p.cos(angle) * nextWidth / 2;
+      
+          // Extend the next segment position slightly for overlap
+          let extendedNextX = next.x + p.cos(angle) * overlapFactor;
+          let extendedNextY = next.y + p.sin(angle) * overlapFactor;
+      
+          // Draw a quad between the current and extended next segments
+          p.beginShape();
+          p.vertex(current.x - offsetX, current.y - offsetY);
+          p.vertex(current.x + offsetX, current.y + offsetY);
+          p.vertex(extendedNextX + nextOffsetX, extendedNextY + nextOffsetY);
+          p.vertex(extendedNextX - nextOffsetX, extendedNextY - nextOffsetY);
+          p.endShape(p.CLOSE);
         }
-        p.endShape();
       };
       
 
