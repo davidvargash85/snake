@@ -25,28 +25,30 @@ const SnakeGame = React.memo(({ onGameOver, onFoodEaten }) => {
 
     const sketch = (p) => {
       p.setup = () => {
-        p.createCanvas(500, 500);
-        p.frameRate(10);
+        p.createCanvas(500, 500, p.WEBGL);
+        p.frameRate(65);
         initializeGame();
       };
+
+      let updateInterval = 100; // 100 milliseconds between game updates
+      let lastUpdateTime = 0;
 
       p.draw = () => {
         p.background(0);
         p.scale(p.width / gridWidth, p.height / gridHeight);
 
-        // Draw the checkered background
         drawBackground(p, gridWidth, gridHeight);
-
-        // Draw the apple and snake
         p.translate(0.5, 0.5);
         drawApple(p, fruit);
-        showSegments(p, segments); // Draw the snake segments
+        showSegments(p, segments);
         drawSnakeFace(p, segments[0], direction, fruit);
 
-        if (gameStarted) {
+        let currentTime = p.millis();
+        if (currentTime - lastUpdateTime > updateInterval && gameStarted) {
           updateSegments();
           checkForCollision();
           checkForFruit();
+          lastUpdateTime = currentTime;
         }
       };
 
